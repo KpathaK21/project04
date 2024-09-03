@@ -1,0 +1,35 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go Grade
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+jobs:
+
+  grade:
+    name: Autograder
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+      
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.23.x
+
+    - name: Build
+      run: go build -v ./...
+      
+    - name: Test
+      id: test
+      uses: cs272-0304-f23/action-go-grade@v0.3.4
+      if: always()
+      with:
+        rubricUrl: 'https://cs272-f24.github.io/rubric/project01.json'
